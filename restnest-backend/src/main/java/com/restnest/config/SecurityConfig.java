@@ -1,7 +1,9 @@
+
 package com.restnest.config;
 
 import com.restnest.security.JwtAuthFilter;
 import com.restnest.security.JwtService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,23 +29,37 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity http, JwtService jwtService) throws Exception {
+
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            .sessionManagement(s ->
+                s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(e ->
+                e.authenticationEntryPoint(
+                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/error").permitAll()
-                // public: search, property details, availability, filter options, uploaded photos
-                .requestMatchers(HttpMethod.GET, "/api/properties/**", "/api/meta", "/uploads/**").permitAll()
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/properties/**",
+                    "/api/meta",
+                    "/uploads/**"
+                ).permitAll()
                 .requestMatchers("/api/host/**").hasRole("HOST")
                 .requestMatchers("/api/bookings/**").hasRole("GUEST")
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated())
-            .addFilterBefore(new JwtAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(
+                new JwtAuthFilter(jwtService),
+                UsernamePasswordAuthenticationFilter.class
+            );
+
         return http.build();
     }
 
@@ -53,26 +69,26 @@ public class SecurityConfig {
     }
 
     @Bean
- @Bean
-public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration c = new CorsConfiguration();
+    public CorsConfigurationSource corsConfigurationSource() {
 
-    c.setAllowedOrigins(List.of(
-        "http://localhost:4200",
-        "http://localhost:62058"
-    ));
+        CorsConfiguration c = new CorsConfiguration();
 
-    c.setAllowedMethods(List.of(
-        "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
-    ));
+        c.setAllowedOrigins(List.of(
+            "http://localhost:4200",
+            "http://localhost:62058"
+        ));
 
-    c.setAllowedHeaders(List.of("*"));
+        c.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
+        ));
 
-    UrlBasedCorsConfigurationSource source =
-        new UrlBasedCorsConfigurationSource();
+        c.setAllowedHeaders(List.of("*"));
 
-    source.registerCorsConfiguration("/**", c);
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
 
-    return source;
-}
+        source.registerCorsConfiguration("/**", c);
+
+        return source;
+    }
 }
