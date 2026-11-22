@@ -73,10 +73,11 @@ public class SecurityConfig {
 
         CorsConfiguration c = new CorsConfiguration();
 
-        c.setAllowedOrigins(List.of(
-            "http://localhost:4200",
-            "http://localhost:62058"
-        ));
+     c.setAllowedOrigins(List.of(
+    "http://localhost:4200",
+    "http://localhost:62058",
+    "https://rest-nest-navy.vercel.app"
+));
 
         c.setAllowedMethods(List.of(
             "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
