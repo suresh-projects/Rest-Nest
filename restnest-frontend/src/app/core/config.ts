@@ -1,2 +1,1 @@
-/** Backend URL. Port maathanum na inga mattum maathu. */
-export const API_URL = 'http://localhost:8081';
+export const API_URL = 'https://restnest-backend.onrender.com';
